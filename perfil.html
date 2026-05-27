@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil - Sistema Minerva</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="CSS/styles.css">
+
+    <script>
+        if (!localStorage.getItem('minerva_token')) {
+            window.location.replace('login.html');
+        }
+    </script>
+</head>
+<body class="d-flex">
+
+    <div id="menu-container"></div>
+
+    <div class="flex-grow-1 d-flex flex-column" style="min-width: 0;">
+        <header class="navbar navbar-expand-lg navbar-light bg-white border-bottom p-3 shadow-sm">
+            <div class="container-fluid">
+                <button class="btn btn-outline-secondary me-3" id="toggleSidebar"><i class="bi bi-list"></i></button>
+                <span class="navbar-brand mb-0 h1">Perfil de Usuario</span>
+            </div>
+        </header>
+
+        <main class="p-4 overflow-auto">
+            <h2 class="mb-4"> Mi Perfil</h2>
+            
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow-sm text-center">
+                        <div class="card-body">
+
+                            <i class="bi bi-person-circle text-secondary mb-3"
+                            style="font-size: 5rem;"
+                            id="perfil-foto">
+                            </i>
+
+                            <h4 class="card-title fw-bold" id="perfil-usuario">
+                                Usuario
+                            </h4>
+
+                            <p class="text-muted mb-1" id="perfil-correo">
+                                correo@minerva.com
+                            </p>
+
+                            <span class="badge bg-primary" id="perfil-rol">
+                                Rol
+                            </span>
+
+                        </div>
+
+                        <div class="card-footer bg-white">
+
+                            <input
+                                type="file"
+                                id="input-foto"
+                                class="d-none"
+                                accept="image/*"
+                            >
+
+                            <button
+                                class="btn btn-outline-primary btn-sm w-100"
+                                id="btn-cambiar-foto"
+                                type="button">
+
+                                <i class="bi bi-camera"></i>
+                                Cambiar Foto
+
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+            
+
+                <div class="col-md-8">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-white border-bottom">
+                            <h5 class="mb-0 mt-1">Detalles de la Cuenta</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="form-perfil">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Nombres</label>
+                                        <input type="text" class="form-control" value="Juan" disabled>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Apellidos</label>
+                                        <input type="text" class="form-control" value="Pérez" disabled>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Correo Electrónico</label>
+                                    <input type="email" class="form-control" value="admin@minerva.com" disabled>
+                                </div>
+                                
+                                <hr class="my-4">
+                                <h6 class="fw-bold mb-3">Cambiar Contraseña</h6>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Contraseña Actual</label>
+                                    <input type="password" class="form-control" placeholder="Ingresa tu contraseña actual">
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Nueva Contraseña</label>
+                                        <input type="password" class="form-control" placeholder="Nueva contraseña">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Confirmar Nueva Contraseña</label>
+                                        <input type="password" class="form-control" placeholder="Repite la contraseña">
+                                    </div>
+                                </div>
+                                
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-success"> Actualizar Contraseña </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/perfil.js"></script>
+</body>
+</html>

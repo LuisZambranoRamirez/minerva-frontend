@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contactos - Sistema Minerva</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="CSS/styles.css">
+
+    <script>
+        if (!localStorage.getItem('minerva_token')) {
+            window.location.replace('login.html');
+        }
+    </script>
+</head>
+<body class="d-flex">
+
+    <div id="menu-container"></div>
+
+    <div class="flex-grow-1 d-flex flex-column" style="min-width: 0;">
+        <header class="navbar navbar-expand-lg navbar-light bg-white border-bottom p-3 shadow-sm">
+            <div class="container-fluid">
+                <button class="btn btn-outline-secondary me-3" id="toggleSidebar"><i class="bi bi-list"></i></button>
+                <span class="navbar-brand mb-0 h1">Módulo de Contactos</span>
+            </div>
+        </header>
+
+        <main class="p-4 overflow-auto">
+            <h2 class="mb-4">👥 Gestión de Contactos</h2>
+
+            <ul class="nav nav-tabs mb-4" id="contactosTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active fw-bold" id="clientes-tab" data-bs-toggle="tab" data-bs-target="#clientes" type="button" role="tab">
+                        <i class="bi bi-person-hearts"></i> Clientes
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link fw-bold" id="proveedores-tab" data-bs-toggle="tab" data-bs-target="#proveedores" type="button" role="tab">
+                        <i class="bi bi-truck"></i> Proveedores
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="contactosTabContent">
+                
+                <div class="tab-pane fade show active" id="clientes" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0 text-muted">Directorio de Clientes</h5>
+                        <button class="btn btn-primary btn-sm" onclick="abrirModalCliente()">
+                            <i class="bi bi-plus-lg"></i> Nuevo Cliente
+                        </button>
+                    </div>
+                    <div class="card shadow-sm">
+                        <div class="card-body p-0">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>ID / Nombre</th>
+                                        <th>Teléfono</th>
+                                        <th>Tipo de Cliente</th>
+                                        <th>Fecha Registro</th>
+                                        <th class="text-end pe-4">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-clientes">
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="proveedores" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0 text-muted">Directorio de Proveedores</h5>
+                        <button class="btn btn-primary btn-sm" onclick="abrirModalProveedor()">
+                            <i class="bi bi-plus-lg"></i> Nuevo Proveedor
+                        </button>
+                    </div>
+                    <div class="card shadow-sm">
+                        <div class="card-body p-0">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Nombre del Proveedor</th>
+                                        <th>RUC</th>
+                                        <th>Teléfono</th>
+                                        <th>Estado</th>
+                                        <th class="text-end pe-4">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-proveedores">
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal fade" id="modalCliente" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="tituloModalCliente">Registrar Cliente</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="form-cliente">
+                                <input type="hidden" id="cli-idViejo">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Nombre del Cliente / ID</label>
+                                    <input type="text" class="form-control" id="cli-nombre" required placeholder="Ej. Juan Pérez">
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Teléfono</label>
+                                        <input type="text" class="form-control" id="cli-telefono" required placeholder="Ej. 987654321" maxlength="9">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Tipo (RF-03)</label>
+                                        <select class="form-select" id="cli-tipo" required>
+                                            <option value="Minorista">Minorista</option>
+                                            <option value="Mayorista">Mayorista</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-primary" onclick="guardarCliente()">Guardar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modalProveedor" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="tituloModalProveedor">Registrar Proveedor</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="form-proveedor">
+                                <input type="hidden" id="prov-idViejo">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Razón Social / Nombre</label>
+                                    <input type="text" class="form-control" id="prov-nombre" required placeholder="Ej. Tech Supplies S.A.">
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">RUC</label>
+                                        <input type="text" class="form-control" id="prov-ruc" required placeholder="11 dígitos" maxlength="11">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Teléfono</label>
+                                        <input type="text" class="form-control" id="prov-telefono" required placeholder="Ej. 999888777" maxlength="9">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Estado del Proveedor</label>
+                                    <select class="form-select" id="prov-estado" required>
+                                        <option value="Activo">Activo (Habilitado para Compras)</option>
+                                        <option value="Inactivo">Inactivo (Suspendido)</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-primary" onclick="guardarProveedor()">Guardar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/contactos.js"></script>
+</body>
+</html>

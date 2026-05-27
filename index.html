@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Sistema Minerva</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="CSS/styles.css">
+
+    <script>
+        if (!localStorage.getItem('minerva_token')) {
+            window.location.replace('login.html');
+        }
+    </script>
+</head>
+<body class="d-flex">
+
+    <div id="menu-container"></div>
+
+    <div class="flex-grow-1 d-flex flex-column" style="min-width: 0;">
+        <header class="navbar navbar-expand-lg navbar-light bg-white border-bottom p-3 shadow-sm">
+            <div class="container-fluid">
+                <button class="btn btn-outline-secondary me-3" id="toggleSidebar"><i class="bi bi-list"></i></button>
+                <span class="navbar-brand mb-0 h1">Dashboard Overview</span>
+            </div>
+        </header>
+
+        <main class="p-4 overflow-auto">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-0">📊 Centro de Control Logístico</h2>
+                    <div class="text-muted small">Actualizado al: <span id="fecha-actual"></span></div>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-danger" onclick="exportarReporte('PDF')">
+                        <i class="bi bi-file-earmark-pdf"></i> Exportar PDF
+                    </button>
+                    <button class="btn btn-outline-success" onclick="exportarReporte('Excel')">
+                        <i class="bi bi-file-earmark-excel"></i> Exportar Excel
+                    </button>
+                </div>
+            </div>
+            
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <div class="card shadow-sm h-100 border-start border-primary border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="text-muted text-uppercase mb-0">Ingresos del Mes</h6>
+                                <i class="bi bi-currency-dollar fs-4 text-primary"></i>
+                            </div>
+                            <h3 class="fw-bold mt-2 mb-1">$35,210.43</h3>
+                            <small class="text-success fw-bold"><i class="bi bi-arrow-up-right"></i> Ventas y salidas</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card shadow-sm h-100 border-start border-info border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="text-muted text-uppercase mb-0">Egresos / Compras</h6>
+                                <i class="bi bi-box-seam fs-4 text-info"></i>
+                            </div>
+                            <h3 class="fw-bold mt-2 mb-1">$10,390.90</h3>
+                            <small class="text-muted fw-bold">Entradas de mercadería</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card shadow-sm h-100 border-start border-warning border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="text-muted text-uppercase mb-0">Stock Crítico (RF-07)</h6>
+                                <i class="bi bi-exclamation-triangle fs-4 text-warning"></i>
+                            </div>
+                            <h3 class="fw-bold mt-2 mb-1 text-warning">12 Lotes</h3>
+                            <small class="text-danger fw-bold">Requieren reposición</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card shadow-sm h-100 border-start border-danger border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="text-muted text-uppercase mb-0">Por Vencer (RF-06)</h6>
+                                <i class="bi bi-calendar-x fs-4 text-danger"></i>
+                            </div>
+                            <h3 class="fw-bold mt-2 mb-1 text-danger">5 Lotes</h3>
+                            <small class="text-danger fw-bold">Vencen en < 30 días</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4 mb-4">
+                <div class="col-lg-8">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Flujo Financiero (Ingresos vs Compras)</h5>
+                        </div>
+                        <div class="card-body">
+                            <div style="height: 300px; width: 100%;">
+                                <canvas id="mainChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card shadow-sm h-100 border-danger">
+                        <div class="card-header bg-transparent border-bottom">
+                            <h5 class="mb-0 text-danger"><i class="bi bi-bell-fill"></i> Alertas de Inventario</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush rounded-bottom" id="panel-alertas">
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-transparent border-bottom">
+                            <h5 class="mb-0">Top Productos Vendidos (RF-08)</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-4">Producto</th>
+                                        <th>Ventas (Und)</th>
+                                        <th class="text-end pe-4">Tendencia</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="top-productos">
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Auditoría Reciente (RF-09)</h5>
+                            <a href="#" class="btn btn-sm btn-link text-decoration-none">Ver todo</a>
+                        </div>
+                        <div class="card-body">
+                            <div id="timeline-auditoria" class="timeline-container">
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
